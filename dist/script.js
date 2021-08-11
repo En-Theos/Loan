@@ -95,18 +95,101 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
+/* harmony import */ var _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/slider */ "./src/js/modules/slider/slider.js");
+/* harmony import */ var _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/sliderMini */ "./src/js/modules/slider/sliderMini.js");
+/* harmony import */ var _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/playerVideo */ "./src/js/modules/playerVideo.js");
+
+
 
 window.addEventListener('DOMContentLoaded', () => {
-  new _modules_slider__WEBPACK_IMPORTED_MODULE_0__["default"](".page", ".page > div", ".next", ".sidecontrol > a").initializationEvent();
+  new _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    selTape: ".page",
+    selSlides: ".page > div",
+    selButtonNext: ".next",
+    selZeroSlide: ".sidecontrol > a"
+  }).initializationEvent();
+  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    selTape: ".showup__content-slider .tape",
+    selSlides: ".showup__content-slider .tape .card",
+    selButtonNext: ".showup__next",
+    selButtonPrev: ".showup__prev",
+    direction: "horizontal"
+  }).initializationEvent();
+  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    selTape: ".modules__content-slider .tape",
+    selSlides: ".modules__content-slider .tape .card",
+    selButtonNext: ".modules__info-btns .slick-next",
+    selButtonPrev: ".modules__info-btns .slick-prev",
+    direction: "horizontal",
+    autoSwitching: true
+  }).initializationEvent();
+  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    selTape: ".feed__slider .tape",
+    selSlides: ".feed__slider .tape .feed__item",
+    selButtonNext: ".feed__slider .slick-next",
+    selButtonPrev: ".feed__slider .slick-prev",
+    direction: "horizontal",
+    activeClass: "feed__item-active"
+  }).initializationEvent();
+  new _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.overlay', '.play').initializationEvent();
 });
 
 /***/ }),
 
-/***/ "./src/js/modules/slider.js":
-/*!**********************************!*\
-  !*** ./src/js/modules/slider.js ***!
-  \**********************************/
+/***/ "./src/js/modules/playerVideo.js":
+/*!***************************************!*\
+  !*** ./src/js/modules/playerVideo.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PlayerVideo; });
+class PlayerVideo {
+  constructor(seModal, selButtons) {
+    this.modal = document.querySelector(seModal);
+    this.buttons = document.querySelectorAll(selButtons);
+  }
+
+  initializationVideo() {
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  }
+
+  initializationEvent() {
+    this.initializationVideo();
+    this.buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        this.player = new YT.Player('frame', {
+          height: '100%',
+          width: '100%',
+          videoId: button.getAttribute("data-url")
+        });
+        this.modal.style.display = "flex";
+      });
+    });
+    this.modal.addEventListener('click', event => {
+      if (event.target == this.modal || event.target.classList.contains("close")) {
+        this.modal.style.display = "none";
+        this.modal.querySelector("iframe").remove();
+        const div = document.createElement("div");
+        div.id = "frame";
+        this.modal.querySelector(".video").prepend(div);
+      }
+    });
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/slider.js":
+/*!*****************************************!*\
+  !*** ./src/js/modules/slider/slider.js ***!
+  \*****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -114,49 +197,170 @@ window.addEventListener('DOMContentLoaded', () => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Slider; });
 class Slider {
-  constructor(selTape, selSlides, selButtonNext, selLogo) {
+  constructor({
+    selTape,
+    selSlides,
+    selButtonNext,
+    selButtonPrev,
+    selZeroSlide,
+    direction = "vertical",
+    leafedSlide = 1,
+    activeClass = "card-active",
+    autoSwitching = false
+  }) {
     this.tape = document.querySelector(selTape);
     this.slides = document.querySelectorAll(selSlides);
     this.buttonsNext = document.querySelectorAll(selButtonNext);
-    this.logo = document.querySelectorAll(selLogo);
-    this.currentSlide = 0;
-    this.maxCurrentSlide = this.slides.length - 1;
-    this.biasTape = 0;
+    this.buttonPrev = document.querySelectorAll(selButtonPrev);
+    this.logo = document.querySelectorAll(selZeroSlide);
+    this.direction = direction;
+    this.leafedSlide = leafedSlide;
+    this.activeClass = activeClass;
+    this.autoSwitching = autoSwitching;
+    this.technicalVariables();
+  }
+
+  technicalVariables() {
+    this._currentSlide = 0;
+    this._maxCurrentSlide = this.slides.length - 1;
+    this._biasTape = 0;
+  }
+
+  checkDirection(funVertical, funHorizontal) {
+    if (this.direction == "vertical") {
+      funVertical();
+    } else if (this.direction == "horizontal") {
+      funHorizontal();
+    }
   }
 
   switching(n) {
-    const heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
-    const maxBiasTape = heightSlide * this.maxCurrentSlide;
-    this.currentSlide += n;
-    this.biasTape = heightSlide * this.currentSlide;
+    let heightSlide = 0;
+    let widthSlide = 0;
+    this.checkDirection(() => {
+      heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
+    }, () => {
+      widthSlide = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("") + +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+    });
+    const maxBiasTape = (heightSlide || widthSlide) * this._maxCurrentSlide;
+    this._currentSlide += n;
+    this._biasTape = (heightSlide || widthSlide) * this._currentSlide;
 
-    if (this.currentSlide > this.maxCurrentSlide || n == 0) {
-      this.currentSlide = 0;
-      this.biasTape = 0;
+    if (this._currentSlide > this._maxCurrentSlide || n == 0) {
+      this._currentSlide = 0;
+      this._biasTape = 0;
     }
 
-    if (this.currentSlide == 2 && this.tape.classList.contains("page")) {
+    if (this._currentSlide < 0) {
+      this._currentSlide = this.leafedSlide == 1 ? this._maxCurrentSlide : this._maxCurrentSlide - 1;
+      this._biasTape = this.leafedSlide == 1 ? maxBiasTape : maxBiasTape - widthSlide;
+    }
+
+    if (this._currentSlide == 2 && this.tape.classList.contains("page")) {
       setTimeout(() => {
         document.querySelector(".hanson").style.display = "block";
         document.querySelector(".hanson").classList.add("animated", "slideInDown");
       }, 3000);
     }
 
-    this.tape.style.transform = `translateY(-${this.biasTape}px)`;
+    this.checkDirection(() => {
+      this.tape.style.transform = `translateY(-${this._biasTape}px)`;
+    }, () => {
+      this.tape.style.transform = `translateX(-${this._biasTape}px)`;
+    });
   }
 
   initializationEvent() {
-    this.buttonsNext.forEach(button => {
-      button.addEventListener('click', event => {
-        event.preventDefault();
-        this.switching(1);
+    try {
+      this.buttonsNext.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switching(this.leafedSlide);
+        });
       });
-    });
-    this.logo.forEach(item => {
-      item.addEventListener('click', () => {
-        this.switching(0);
+    } catch (error) {}
+
+    try {
+      this.buttonPrev.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switching(-this.leafedSlide);
+        });
       });
-    });
+    } catch (error) {}
+
+    try {
+      this.logo.forEach(item => {
+        item.addEventListener('click', () => {
+          this.switching(0);
+        });
+      });
+    } catch (error) {}
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/slider/sliderMini.js":
+/*!*********************************************!*\
+  !*** ./src/js/modules/slider/sliderMini.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SliderMini; });
+/* harmony import */ var _slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./slider */ "./src/js/modules/slider/slider.js");
+
+class SliderMini extends _slider__WEBPACK_IMPORTED_MODULE_0__["default"] {
+  constructor(activeClass = "card-active", autoSwitching = false) {
+    super(activeClass, autoSwitching);
+  }
+
+  broadcastActive() {
+    this.slides.forEach(slide => slide.classList.remove(this.activeClass));
+
+    this.slides[this._currentSlide].classList.add(this.activeClass);
+  }
+
+  initializationEvent() {
+    let auto;
+
+    if (this.autoSwitching) {
+      auto = setInterval(() => {
+        this.switching(this.leafedSlide);
+        this.broadcastActive();
+      }, 5000);
+      this.tape.addEventListener('mouseover', () => {
+        clearInterval(auto);
+      });
+      this.tape.addEventListener('mouseout', () => {
+        auto = setInterval(() => {
+          this.switching(this.leafedSlide);
+          this.broadcastActive();
+        }, 5000);
+      });
+    }
+
+    try {
+      this.buttonsNext.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switching(this.leafedSlide);
+          this.broadcastActive();
+          clearInterval(auto);
+        });
+      });
+    } catch (error) {}
+
+    try {
+      this.buttonPrev.forEach(button => {
+        button.addEventListener('click', () => {
+          this.switching(-this.leafedSlide);
+          this.broadcastActive();
+          clearInterval(auto);
+        });
+      });
+    } catch (error) {}
   }
 
 }
