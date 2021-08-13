@@ -98,6 +98,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/slider/slider */ "./src/js/modules/slider/slider.js");
 /* harmony import */ var _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/sliderMini */ "./src/js/modules/slider/sliderMini.js");
 /* harmony import */ var _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/playerVideo */ "./src/js/modules/playerVideo.js");
+/* harmony import */ var _modules_difference__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/difference */ "./src/js/modules/difference.js");
+
 
 
 
@@ -132,7 +134,67 @@ window.addEventListener('DOMContentLoaded', () => {
     activeClass: "feed__item-active"
   }).initializationEvent();
   new _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.overlay', '.play').initializationEvent();
+  new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]([".officerold", ".officernew"], ".officer__card-item").initializationEvent();
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/difference.js":
+/*!**************************************!*\
+  !*** ./src/js/modules/difference.js ***!
+  \**************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Difference; });
+class Difference {
+  constructor(selArrFunctionalBlock, selAllUsItems) {
+    this.arrFunctionalBlock = selArrFunctionalBlock;
+    this.selAllUsItems = selAllUsItems;
+    this.initializationElement();
+  }
+
+  initializationElement() {
+    this.localBtnItem = [];
+    this.localUsItems = [];
+    this.arrCounters = [];
+    this.index = 0;
+    this.arrFunctionalBlock.forEach(selBlock => {
+      this.functionalBlock = document.querySelector(selBlock);
+      this.localUsItems[this.index] = this.functionalBlock.querySelectorAll(this.selAllUsItems);
+      this.localBtnItem[this.index] = this.localUsItems[this.index][this.localUsItems[this.index].length - 1];
+      this.arrCounters[this.index] = 0;
+      this.localUsItems[this.index].forEach(items => {
+        if (items != this.localBtnItem[this.index]) {
+          items.style.display = "none";
+          items.classList.remove("fadeIn");
+        }
+      });
+      this.index++;
+    });
+  }
+
+  initializationEvent() {
+    this.localBtnItem.forEach((button, i) => {
+      button.addEventListener('click', event => {
+        if (event.target.classList.contains("plus") || event.target.closest(".plus")) {
+          if (this.localUsItems[i][this.arrCounters[i]] != button) {
+            this.localUsItems[i][this.arrCounters[i]].style.display = "flex";
+            this.localUsItems[i][this.arrCounters[i]].classList.add("animated", "fadeIn");
+            this.arrCounters[i]++;
+
+            if (this.localUsItems[i][this.arrCounters[i]] == this.localUsItems[i][this.localUsItems[i].length - 1]) {
+              button.remove();
+            }
+          }
+        }
+      });
+    });
+  }
+
+}
 
 /***/ }),
 
