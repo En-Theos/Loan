@@ -2,6 +2,7 @@ import Slider from "./modules/slider/slider";
 import SliderMini from "./modules/slider/sliderMini";
 import VideoPlayer from "./modules/playerVideo";
 import Difference from "./modules/difference";
+import Forms from "./modules/forms";
 
 window.addEventListener('DOMContentLoaded', () => {
    new Slider({
@@ -39,4 +40,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
    new VideoPlayer('.overlay', '.play').initializationEvent();
    new Difference([".officerold", ".officernew"], ".officer__card-item").initializationEvent();
+   new Forms(".join__evolution form", "http://localhost:3000/helps").initializationEvent();
+   new Forms(".schedule__form form", "http://localhost:3000/schedule").initializationEvent();
 });
