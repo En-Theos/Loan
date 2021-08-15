@@ -2566,39 +2566,49 @@ __webpack_require__.r(__webpack_exports__);
 
 
 window.addEventListener('DOMContentLoaded', () => {
-  new _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__["default"]({
-    selTape: ".page",
-    selSlides: ".page > div",
-    selButtonNext: ".next",
-    selZeroSlide: ".sidecontrol > a"
-  }).initializationEvent();
-  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
-    selTape: ".showup__content-slider .tape",
-    selSlides: ".showup__content-slider .tape .card",
-    selButtonNext: ".showup__next",
-    selButtonPrev: ".showup__prev",
-    direction: "horizontal"
-  }).initializationEvent();
-  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
-    selTape: ".modules__content-slider .tape",
-    selSlides: ".modules__content-slider .tape .card",
-    selButtonNext: ".modules__info-btns .slick-next",
-    selButtonPrev: ".modules__info-btns .slick-prev",
-    direction: "horizontal",
-    autoSwitching: true
-  }).initializationEvent();
-  new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
-    selTape: ".feed__slider .tape",
-    selSlides: ".feed__slider .tape .feed__item",
-    selButtonNext: ".feed__slider .slick-next",
-    selButtonPrev: ".feed__slider .slick-prev",
-    direction: "horizontal",
-    activeClass: "feed__item-active"
-  }).initializationEvent();
-  new _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.overlay', '.play').initializationEvent();
-  new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]([".officerold", ".officernew"], ".officer__card-item").initializationEvent();
-  new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"](".join__evolution form", "http://localhost:3000/helps").initializationEvent();
-  new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"](".schedule__form form", "http://localhost:3000/schedule").initializationEvent();
+  if (document.URL.includes('modules')) {
+    new _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__["default"]({
+      selTape: ".moduleapp",
+      selSlides: ".moduleapp > .module",
+      selButtonNext: ".nextmodule",
+      selButtonPrev: ".prevmodule",
+      selZeroSlide: ".sidecontrol > a"
+    }).initializationEvent();
+  } else {
+    new _modules_slider_slider__WEBPACK_IMPORTED_MODULE_0__["default"]({
+      selTape: ".page",
+      selSlides: ".page > div",
+      selButtonNext: ".next",
+      selZeroSlide: ".sidecontrol > a"
+    }).initializationEvent();
+    new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+      selTape: ".showup__content-slider .tape",
+      selSlides: ".showup__content-slider .tape .card",
+      selButtonNext: ".showup__next",
+      selButtonPrev: ".showup__prev",
+      direction: "horizontal"
+    }).initializationEvent();
+    new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+      selTape: ".modules__content-slider .tape",
+      selSlides: ".modules__content-slider .tape .card",
+      selButtonNext: ".modules__info-btns .slick-next",
+      selButtonPrev: ".modules__info-btns .slick-prev",
+      direction: "horizontal",
+      autoSwitching: true
+    }).initializationEvent();
+    new _modules_slider_sliderMini__WEBPACK_IMPORTED_MODULE_1__["default"]({
+      selTape: ".feed__slider .tape",
+      selSlides: ".feed__slider .tape .feed__item",
+      selButtonNext: ".feed__slider .slick-next",
+      selButtonPrev: ".feed__slider .slick-prev",
+      direction: "horizontal",
+      activeClass: "feed__item-active"
+    }).initializationEvent();
+    new _modules_playerVideo__WEBPACK_IMPORTED_MODULE_2__["default"]('.overlay', '.play').initializationEvent();
+    new _modules_difference__WEBPACK_IMPORTED_MODULE_3__["default"]([".officerold", ".officernew"], ".officer__card-item").initializationEvent();
+    new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"](".join__evolution form", "http://localhost:3000/helps").initializationEvent();
+    new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"](".schedule__form form", "http://localhost:3000/schedule").initializationEvent();
+  }
 });
 
 /***/ }),
@@ -2902,7 +2912,9 @@ class Slider {
     this.checkDirection(() => {
       heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
     }, () => {
-      widthSlide = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("") + +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+      const margin = +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+      const width = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("");
+      widthSlide = margin + width;
     });
     const maxBiasTape = (heightSlide || widthSlide) * this._maxCurrentSlide;
     this._currentSlide += n;

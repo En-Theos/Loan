@@ -860,6 +860,10 @@ a:active {
     height: 100vh;
 }
 
+.moduleapp {
+    transition: .3s;
+}
+
 .modules__info .hanson {
     display: none;
     position: absolute;

@@ -34,7 +34,9 @@ export default class Slider {
         this.checkDirection(() => {
             heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
         }, () => {
-            widthSlide = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("") + +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+            const margin = +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+            const width = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("");
+            widthSlide = margin + width;
         });
 
         const maxBiasTape = (heightSlide || widthSlide) * this._maxCurrentSlide;
