@@ -13,6 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
          selButtonPrev: ".prevmodule",
          selZeroSlide: ".sidecontrol > a"
       }).initializationEvent();
+
+      new VideoPlayer('.overlay', '.play', '.module__video-item').initializationEvent();
    } else {
       new Slider({
          selTape: ".page",
