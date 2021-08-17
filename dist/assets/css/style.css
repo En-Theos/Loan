@@ -203,8 +203,14 @@ a:active {
 }
 
 .msg {
-    display: none;
-    margin-top: 20px
+    margin-top: 20px;
+    overflow: hidden;
+    max-height: 0;
+    transition: .3s;
+}
+
+.msgActive {
+    max-height: 130px;
 }
 
 .plus {
@@ -1734,7 +1740,6 @@ a:active {
 
 .module {
     position: relative;
-    height: 100vh;
     padding-top: 0;
     overflow: hidden
 }

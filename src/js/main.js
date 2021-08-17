@@ -3,6 +3,8 @@ import SliderMini from "./modules/slider/sliderMini";
 import VideoPlayer from "./modules/playerVideo";
 import Difference from "./modules/difference";
 import Forms from "./modules/forms";
+import Spoiler from "./modules/spoiler";
+import Download from "./modules/download";
 
 window.addEventListener('DOMContentLoaded', () => {
    if (document.URL.includes('modules')) {
@@ -15,6 +17,8 @@ window.addEventListener('DOMContentLoaded', () => {
       }).initializationEvent();
 
       new VideoPlayer('.overlay', '.play', '.module__video-item').initializationEvent();
+      new Spoiler(".module__info-show .plus", ".msg").initializationEvent();
+      new Download(".download").initializationEvent();
    } else {
       new Slider({
          selTape: ".page",

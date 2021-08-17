@@ -17,6 +17,16 @@ export default class Slider {
         this._currentSlide = 0;
         this._maxCurrentSlide = this.slides.length - 1;
         this._biasTape = 0;
+        this.heightSlide = 0;
+        this.widthSlide = 0;
+
+        this.checkDirection(() => {
+            this.heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
+        }, () => {
+            const margin = +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
+            const width = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("");
+            this.widthSlide = margin + width;
+        });
     }
 
     checkDirection(funVertical, funHorizontal) {
@@ -28,20 +38,9 @@ export default class Slider {
     }
 
     switching(n) {
-        let heightSlide = 0;
-        let widthSlide = 0;
-
-        this.checkDirection(() => {
-            heightSlide = window.getComputedStyle(this.slides[0]).height.match(/\d|\./g).join("");
-        }, () => {
-            const margin = +window.getComputedStyle(this.slides[0]).marginRight.match(/\d|\./g).join("");
-            const width = +window.getComputedStyle(this.slides[this._currentSlide + 1 == this.slides.length ? 0 : this._currentSlide + 1]).width.match(/\d|\./g).join("");
-            widthSlide = margin + width;
-        });
-
-        const maxBiasTape = (heightSlide || widthSlide) * this._maxCurrentSlide;
+        const maxBiasTape = (this.heightSlide || this.widthSlide) * this._maxCurrentSlide;
         this._currentSlide += n;
-        this._biasTape = (heightSlide || widthSlide) * this._currentSlide;
+        this._biasTape = (this.heightSlide || this.widthSlide) * this._currentSlide;
 
         
         if (this._currentSlide > this._maxCurrentSlide || n == 0) {
@@ -50,15 +49,18 @@ export default class Slider {
         }
         if (this._currentSlide < 0) {
             this._currentSlide = this.leafedSlide == 1 ? this._maxCurrentSlide : this._maxCurrentSlide - 1;
-            this._biasTape = this.leafedSlide == 1 ? maxBiasTape : maxBiasTape - widthSlide;
+            this._biasTape = this.leafedSlide == 1 ? maxBiasTape : maxBiasTape - this.widthSlide;
         }
         
         if (this._currentSlide == 2 && this.tape.classList.contains("page")) {
             setTimeout(() => {
                 document.querySelector(".hanson").style.display = "block";
-                document.querySelector(".hanson").classList.add("animated", "slideInDown");
+                document.querySelector(".hanson").classList.add("animated", "slideInDown"); 
             }, 3000);
         }
+
+        this.slides.forEach(s => s.style.height = "");
+        this.slides[this._currentSlide].style.height = "100vh";
 
         this.checkDirection(() => {
             this.tape.style.transform = `translateY(-${this._biasTape}px)`;
@@ -68,6 +70,7 @@ export default class Slider {
     }
 
     initializationEvent() {
+        this.slides[0].style.height = "100vh";
         try {
             this.buttonsNext.forEach(button => {
                 button.addEventListener('click', () => {
