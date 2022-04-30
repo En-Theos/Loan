@@ -18,7 +18,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
       new VideoPlayer('.overlay', '.play', '.module__video-item').initializationEvent();
       new Spoiler(".module__info-show .plus", ".msg").initializationEvent();
-      new Download(".download").initializationEvent();
    } else {
       new Slider({
          selTape: ".page",
